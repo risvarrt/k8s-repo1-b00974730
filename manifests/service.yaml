@@ -19,11 +19,11 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: ks-service-b00936909
+  name: ks-service-b00974730
 spec:
   type: LoadBalancer #remove in secnd deployment
   selector:
-    app: k8s-app-b00936909
+    app: k8s-app-b00974730
   ports:
   - port: 80
     targetPort: 5002
@@ -31,10 +31,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: ks-service2-b00936909
+  name: ks-service2-b00974730
 spec:
   selector:
-    app: k8s-app-b00936909
+    app: k8s-app-b00974730
   ports:
   - port: 7002
     targetPort: 7002
