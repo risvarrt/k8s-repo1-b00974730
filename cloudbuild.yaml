@@ -1,12 +1,16 @@
+options:
+  logging: CLOUD_LOGGING_ONLY  # Direct logs only to Cloud Logging, avoiding Cloud Storage requirements
+
 steps:
-  # Docker Build
+  # Step 1: Docker Build
   - name: 'gcr.io/cloud-builders/docker'
     args: ['build', '-t', 'us-central1-docker.pkg.dev/csci-5409-441200/k8s-artreg-b00974730/image1', './']
 
-  # Docker Push another small change
+  # Step 2: Docker Push
   - name: 'gcr.io/cloud-builders/docker'
     args: ['push', 'us-central1-docker.pkg.dev/csci-5409-441200/k8s-artreg-b00974730/image1']
 
+  # Step 3: GKE Deploy
   - name: "gcr.io/cloud-builders/gke-deploy"
     args:
       - run
@@ -14,5 +18,3 @@ steps:
       - --image=us-central1-docker.pkg.dev/csci-5409-441200/k8s-artreg-b00974730/image1
       - --location=us-central1-c
       - --cluster=k8s-cluster-b00974730
- 
-  
