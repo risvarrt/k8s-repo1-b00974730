@@ -16,5 +16,5 @@ steps:
       - run
       - --filename=./manifests/
       - --image=us-central1-docker.pkg.dev/csci-5409-441200/k8s-artreg-b00974730/image1
-      - --location=us-central1-c
+      - --location=us-central1
       - --cluster=k8s-cluster-b00974730
