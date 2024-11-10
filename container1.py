@@ -1,60 +1,30 @@
+from flask import Flask, request, jsonify
+import requests
 import os
 import csv
-import requests
-from flask import Flask, request, jsonify
-
- 
 
 app = Flask(__name__)
 
- 
-
-@app.route('/store-file', methods=['POST'])
-def store_file():
-    data = request.json
-    file = data.get('file')
-    file_data = data.get('data')
-
- 
-
-    if not file or not file_data:
-        return jsonify({'file': None, 'error': 'Invalid JSON input.'}), 400
-
- 
-
-    file_path = os.path.join('/risvarrt_PV_dir', file)
-
- 
-
-    try:
-        with open(file_path, 'w') as f:
-            f.write(file_data)
-        return jsonify({'file': file, 'message': 'Success.'}), 200
-    except:
-        return jsonify({'file': file, 'error': 'Error while storing the file to the storage.'}), 500
-
- 
-
 @app.route('/calculate', methods=['POST'])
 def calculate():
-    data = request.json
-    file = data.get('file')
-    product = data.get('product')
+    data = request.get_json() 
 
- 
+    # Validate input JSON
+    if 'file' not in data or not data['file']:
+        return jsonify({"file": None, "error": "Invalid JSON input."}), 400
 
-    if not file:
-        return jsonify({'file': None, 'error': 'Invalid JSON input.'}), 400
-
- 
-
-    try:
-        response = requests.post('http://ks-service2-b00974730:7002/calculate', json={'file': file, 'product': product})
-        return jsonify(response.json()), response.status_code
-    except requests.exceptions.RequestException as e:
-        return jsonify({'file': file, 'error': 'Error communicating with Container 2.'}), 500
-
- 
+    file_name = data['file']
+    product = data.get('product', '')
+    
+    filepath = os.path.join('/risvarrt_PV_dir', file_name)
+    
+    # Check if the file exists
+    if not os.path.isfile(filepath):
+        return jsonify({"file": file_name, "error": "File not found."}), 404
+    
+    # Forward the request to Container 2
+    response = requests.post('http://ks-service2-b00974730:7002/calculate', json={"file": file_name, "product": product})
+    return jsonify(response.json())
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0',port=5002)
+    app.run(host='0.0.0.0', port=5002)
